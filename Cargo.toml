@@ -23,6 +23,7 @@ authors = ["arkworks contributors"]
 homepage = "https://arkworks.rs"
 repository = "https://github.com/arkworks-rs/algebra"
 categories = ["cryptography"]
+keywords = ["cryptography", "finite-fields"]
 include = [
     "Cargo.toml",
     "src",

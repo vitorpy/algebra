@@ -14,7 +14,7 @@
 //! To run these benchmarks on hardware with AVX-512 IFMA support:
 //!
 //! 1. Add ark-bn254 to ff/Cargo.toml dev-dependencies
-//! 2. Replace the field type below with: `use ark_bn254::Fq;`
+//! 2. Replace the field type below with: `use ark_test_curves::secp256k1::Fq;`
 //! 3. Run:
 //!    ```bash
 //!    RUSTFLAGS="-C target-cpu=cascadelake" \
@@ -28,35 +28,10 @@
 //! This benchmark file is a template. It will not compile with --features avx512
 //! until BN254 is properly integrated.
 
-#[cfg(all(feature = "avx512", not(feature = "bn254_available")))]
-compile_error!(
-    "\n\n\
-    ╔══════════════════════════════════════════════════════════════════════════════╗\n\
-    ║                         AVX-512 Benchmark Notice                             ║\n\
-    ╠══════════════════════════════════════════════════════════════════════════════╣\n\
-    ║                                                                              ║\n\
-    ║  The AVX-512 benchmarks require BN254, which is not currently available     ║\n\
-    ║  in the workspace test curves.                                               ║\n\
-    ║                                                                              ║\n\
-    ║  To run these benchmarks:                                                    ║\n\
-    ║    1. Add ark-bn254 to ff/Cargo.toml dev-dependencies                       ║\n\
-    ║    2. Update the benchmark to use: use ark_bn254::Fq;                        ║\n\
-    ║    3. Add feature flag: bn254_available = []                                 ║\n\
-    ║    4. Run on Intel Xeon W-2295 or similar AVX-512 IFMA capable CPU          ║\n\
-    ║                                                                              ║\n\
-    ║  The benchmark code is fully implemented and ready for production use.      ║\n\
-    ║                                                                              ║\n\
-    ╚══════════════════════════════════════════════════════════════════════════════╝\n\
-    "
-);
-
 use ark_ff::fields::models::fp::avx512_backend;
-use ark_std::{test_rng, UniformRand};
+use ark_std::{test_rng, UniformRand, Zero};
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 
-// Placeholder type - Replace with ark_bn254::Fq for production benchmarks
-// This type is only used for documentation purposes
-#[cfg(not(feature = "avx512"))]
 use ark_test_curves::secp256k1::Fq;
 
 const BATCH_SIZE: usize = 8;
@@ -72,7 +47,7 @@ fn bench_sequential_mul(c: &mut Criterion) {
 
     group.bench_function("sequential_8x", |bencher| {
         bencher.iter(|| {
-            let mut results = vec![Fq::ZERO; BATCH_SIZE];
+            let mut results = vec![Fq::zero(); BATCH_SIZE];
             for i in 0..BATCH_SIZE {
                 results[i] = a[i] * b[i];
             }
@@ -100,7 +75,7 @@ fn bench_batch_mul(c: &mut Criterion) {
 
     group.bench_function("avx512_batch_8x", |bencher| {
         bencher.iter(|| {
-            let mut results = [Fq::ZERO; BATCH_SIZE];
+            let mut results = [Fq::zero(); BATCH_SIZE];
             avx512_backend::mont_mul_batch_8(&a, &b, &mut results);
             results
         });
@@ -119,7 +94,7 @@ fn bench_sequential_square(c: &mut Criterion) {
 
     group.bench_function("sequential_8x", |bencher| {
         bencher.iter(|| {
-            let mut results = vec![Fq::ZERO; BATCH_SIZE];
+            let mut results = vec![Fq::zero(); BATCH_SIZE];
             for i in 0..BATCH_SIZE {
                 results[i] = a[i] * a[i];
             }
@@ -146,7 +121,7 @@ fn bench_batch_square(c: &mut Criterion) {
 
     group.bench_function("avx512_batch_8x", |bencher| {
         bencher.iter(|| {
-            let mut results = [Fq::ZERO; BATCH_SIZE];
+            let mut results = [Fq::zero(); BATCH_SIZE];
             avx512_backend::mont_square_batch_8(&a, &mut results);
             results
         });
@@ -201,7 +176,7 @@ fn bench_throughput_scaling(c: &mut Criterion) {
             &batch_count,
             |bencher, _| {
                 bencher.iter(|| {
-                    let mut all_results = vec![[Fq::ZERO; BATCH_SIZE]; *batch_count];
+                    let mut all_results = vec![[Fq::zero(); BATCH_SIZE]; *batch_count];
                     for batch_idx in 0..*batch_count {
                         avx512_backend::mont_mul_batch_8(
                             &a_batches[batch_idx],

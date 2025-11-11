@@ -435,15 +435,14 @@ mod tests {
     // For now, we use secp256k1::Fq as a placeholder (also 4 limbs, 256 bits)
     // Replace this with actual BN254 when testing on W-2295 hardware
     //
-    // NOTE: These tests are marked with #[ignore] because:
+    // NOTE: These tests were previously marked with #[ignore] because:
     // 1. Type mismatches occur when compiling with --features avx512 due to workspace
     //    crate duplication (ark-test-curves::Fp vs crate::Fp)
     // 2. Tests are intended for BN254 which isn't available in test-curves yet
-    // 3. To run tests: Remove #[ignore], replace TestField with ark_bn254::Fq
-    use ark_test_curves::secp256k1::Fq as TestField;  // TODO: Replace with BN254
+    // 3. For now using secp256k1::Fq (also 4 limbs, 256 bits) from test-curves
+    use ark_test_curves::secp256k1::Fq as TestField;
 
     #[test]
-    #[ignore]  // TODO: Remove #[ignore] when BN254 is available
     fn test_52bit_conversion() {
         // Test conversion between 64-bit and 52-bit representations
         let mut rng = test_rng();
@@ -481,7 +480,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]  // TODO: Remove #[ignore] when BN254 is available
     fn test_batch_mul_correctness() {
         // Test batch multiplication correctness against sequential operations
         let mut rng = test_rng();
@@ -517,7 +515,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]  // TODO: Remove #[ignore] when BN254 is available
     fn test_batch_square_correctness() {
         // Test batch squaring correctness
         let mut rng = test_rng();
@@ -551,7 +548,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]  // TODO: Remove #[ignore] when BN254 is available
     fn test_batch_mul_edge_cases() {
         // Test edge cases: multiplication by zero, one
         let mut rng = test_rng();
@@ -634,7 +630,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]  // TODO: Remove #[ignore] when BN254 is available
     fn test_batch_mul_identity() {
         // Test identity properties: (a * b) * c = a * (b * c)
         let mut rng = test_rng();
