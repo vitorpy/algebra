@@ -37,9 +37,17 @@ serde.workspace = true
 serde_json.workspace = true
 serde_derive.workspace = true
 hex.workspace = true
+criterion.workspace = true
 
 [features]
 default = []
 std = [ "ark-std/std", "ark-serialize/std" ]
 parallel = [ "std", "rayon", "ark-std/parallel", "ark-serialize/parallel" ]
 asm = []
+avx512 = []
+avx512-ifma = ["avx512"]
+
+[[bench]]
+name = "avx512_batch"
+harness = false
+required-features = ["avx512"]

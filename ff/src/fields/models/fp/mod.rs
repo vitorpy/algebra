@@ -20,6 +20,9 @@ use core::iter;
 mod montgomery_backend;
 pub use montgomery_backend::*;
 
+#[cfg(all(feature = "avx512", target_arch = "x86_64"))]
+pub mod avx512_backend;
+
 /// A trait that specifies the configuration of a prime field.
 /// Also specifies how to perform arithmetic on field elements.
 pub trait FpConfig<const N: usize>: Send + Sync + 'static + Sized {
